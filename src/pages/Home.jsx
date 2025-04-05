@@ -7,22 +7,21 @@ import Header from '../components/Header';
 
 const HomeContainer = styled.div`
   max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 2rem auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  align-items: center !important; /* Force centering with !important */
+  text-align: center;
 `;
 
 const Title = styled.h1`
-  color: ${({ theme }) => theme.colors.text};
-  text-align: center;
-  margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
 `;
 
 const Subtitle = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
-  text-align: center;
   margin-bottom: 2rem;
 `;
 
@@ -31,14 +30,10 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleImageUpload = (file) => {
-   console.log('handleImageUpload called with:', file);
-   // In a real app, you would upload the image to your backend
-   console.log('Image uploaded:', file);
    navigate('/loading', { state: { images: file } });
   };
 
   const handleFormSubmit = (formData) => {
-    console.log('Form submitted:', formData);
     navigate('/results', { state: { vehicleDetails: formData } });
   };
 
@@ -47,8 +42,7 @@ const Home = () => {
       <Header />
       <HomeContainer>
         <Title>Get Your Vehicle's Value</Title>
-        <Subtitle>Upload a photo or enter details manually for an instant valuation</Subtitle>
-        
+        <Subtitle>Upload a photo or enter details manually</Subtitle>
         <ImageUpload onImageUpload={handleImageUpload} />
         <VehicleForm onSubmit={handleFormSubmit} />
       </HomeContainer>

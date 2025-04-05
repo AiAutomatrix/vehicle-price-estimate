@@ -5,29 +5,42 @@ import { ReactComponent as UploadIcon } from '../assets/icons/upload.svg';
 import { ReactComponent as CameraIcon } from '../assets/icons/camera.svg';
 
 const ImageUploadContainer = styled.div`
+  width: 100%; /* Make button width match VehicleForm section width */
+  /* max-width: 1000px; Maximum width for ImageUpload button - Removed max-width constraint */
+  align-self: center; /* Center ImageUpload button horizontally */
   display: flex;
-  flex-direction: column;
+  margin-right: 100px;
+  flex-direction: row; /* Arrange icon and text horizontally */
   align-items: center;
-  gap: 1rem;
-  padding: 2rem;
-  border: 2px dashed ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.lg};
-  background-color: ${({ theme }) => theme.colors.card};
+  justify-content: center;
+  padding-top: 0.6rem; /* Even shorter top padding */
+  padding-bottom: 0.5rem; /* Even shorter bottom padding */
+  padding-left: 2rem;
+  padding-right: 2rem;
+  gap: 1rem; /* Adjust gap for horizontal layout */
+  background-color: ${({ theme }) => theme.colors.primary}; /* Primary color background */
+  color: white; /* White text color */
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+  box-shadow: ${({ theme }) => theme.shadows.md}; /* Add shadow */
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    background-color: ${({ theme }) => theme.colors.background};
+    background-color: ${({ theme }) => theme.colors.primaryDark}; /* Darker primary on hover */
+    transform: scale(1.05); /* Slight scale up on hover */
+  }
+
+  &:active {
+    transform: scale(0.98); /* Slight scale down on press */
   }
 `;
 
 const UploadText = styled.p`
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-size: 1rem;
-  margin: 0;
+  color: white; /* White text color to match container */
+  font-size: 1.1rem; /* Slightly larger font size */
+  font-weight: 1200; /* Semi-bold text */
+  margin-bottom: 0.1rem; /* Add some bottom margin */
+  text-align: center; /* Center align text */
 `;
-
 
 
 const ImageUpload = ({ onImageUpload }) => {
@@ -62,9 +75,8 @@ const ImageUpload = ({ onImageUpload }) => {
       />
       <ImageUploadContainer>
         <>
-          <UploadIcon width={48} height={48} fill="#2563eb" />
-          <UploadText>Upload vehicle photos</UploadText>
-          <CameraIcon width={24} height={24} fill="#64748b" />
+          <UploadIcon width={24} height={24} fill="white" /> {/* Larger icon and white fill */}
+          <UploadText>Upload Car Image</UploadText>
         </>
       </ImageUploadContainer>
     </label>
@@ -72,3 +84,5 @@ const ImageUpload = ({ onImageUpload }) => {
 };
 
 export default ImageUpload;
+
+

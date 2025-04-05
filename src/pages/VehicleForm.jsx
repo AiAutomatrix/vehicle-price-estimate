@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const FormContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.card};
-  padding: 2rem;
+  width: 95%; /* Make form wider, same as ImageUpload */
+  max-width: 1000px; /* Increased max width for form */
+  background-color: ${({ theme }) => theme.colors.surface}; /* Use surface color like HomeContainer and ImageUpload */
+  padding-top: 1rem; /* Further reduced vertical padding */
+  padding-bottom: 1rem; /* Further reduced vertical padding */
+  padding-left: 2rem;  /* Keep horizontal padding */
+  padding-right: 2rem; /* Keep horizontal padding */
   border-radius: ${({ theme }) => theme.radii.lg};
   box-shadow: ${({ theme }) => theme.shadows.md};
+  margin-top: 2rem; /* Add margin to separate from ImageUpload */
+  align-self: center; /* Ensure form is centered within HomeContainer */
 `;
 
 const FormGroup = styled.div`
@@ -113,7 +120,7 @@ const VehicleForm = ({ onSubmit }) => {
   return (
     <FormContainer>
       
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{width: '100%'}}> {/* Added style to make form element wider */}
         <FormGroup>
           <Label htmlFor="make">Make</Label>
           <Select

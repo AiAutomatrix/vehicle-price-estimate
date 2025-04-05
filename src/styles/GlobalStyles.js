@@ -8,7 +8,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Open Sans', sans-serif; /* Default body font */
     line-height: 1.5;
     background-color: ${({ theme }) => theme.colors.background};
     color: ${({ theme }) => theme.colors.text};
@@ -20,8 +20,35 @@ const GlobalStyles = createGlobalStyle`
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
+    font-family: 'Roboto', sans-serif; /* Heading font */
+    font-weight: 700; /* Bold headings */
     line-height: 1.2;
+    margin-bottom: 1rem; /* Spacing below headings */
+  }
+
+  h1 {
+    font-size: 2.5rem; /* ~40px */
+  }
+
+  h2 {
+    font-size: 2rem;    /* ~32px */
+  }
+
+  h3 {
+    font-size: 1.75rem; /* ~28px */
+  }
+
+  h4 {
+    font-size: 1.5rem;  /* ~24px */
+  }
+
+  h5 {
+    font-size: 1.25rem; /* ~20px */
+  }
+
+  h6 {
+    font-size: 1rem;    /* ~16px */
+    font-weight: 600; /* Semi-bold for lower headings */
   }
 
   a {

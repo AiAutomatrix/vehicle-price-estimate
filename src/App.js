@@ -19,11 +19,20 @@ import Settings from './pages/Settings';
 import SavedReports from './pages/SavedReports';
 
 function App() {
-  const [theme, setTheme] = useState('light');
-  
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+  const storedTheme = localStorage.getItem('theme') || 'light';
+  const [theme, setTheme] = useState(storedTheme);
+
+  const toggleTheme = (selectedTheme) => {
+    console.log('toggleTheme called with theme:', selectedTheme);
+    console.log('Current theme state (before setTheme):', theme); // Log before setTheme
+    localStorage.setItem('theme', selectedTheme);
+    setTheme(selectedTheme);
+    console.log('Current theme state (after setTheme):', theme); // Log after setTheme
   };
+
+  console.log('App component rendering with theme:', theme); // Log in render
+
+  console.log('Initial theme:', theme);
 
   const router = createBrowserRouter(
     [

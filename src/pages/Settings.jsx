@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as SettingsIcon } from '../assets/icons/settings.svg';
-import ThemeToggle from '../components/ThemeToggle';
 import Header from '../components/Header';
 
 const SettingsContainer = styled.div`
@@ -49,6 +48,7 @@ const SettingItem = styled.div`
 
 const SettingLabel = styled.span`
   color: ${({ theme }) => theme.colors.text};
+  margin: 0;
 `;
 
 const Select = styled.select`
@@ -59,7 +59,12 @@ const Select = styled.select`
   color: ${({ theme }) => theme.colors.text};
 `;
 
+
 const Settings = ({ toggleTheme, theme }) => {
+  const handleChangeTheme = (e) => {
+    toggleTheme(e.target.value);
+  };
+
   return (
     <>
       <Header />
@@ -73,7 +78,15 @@ const Settings = ({ toggleTheme, theme }) => {
           <SectionTitle>Appearance</SectionTitle>
           <SettingItem>
             <SettingLabel>Theme</SettingLabel>
-            <ThemeToggle toggleTheme={toggleTheme} theme={theme} />
+            <Select
+              id="theme-select"
+              name="theme"
+              value={theme}
+              onChange={handleChangeTheme}
+            >
+              <option value="light">Light Mode</option>
+              <option value="dark">Dark Mode</option>
+            </Select>
           </SettingItem>
         </SettingsSection>
 
