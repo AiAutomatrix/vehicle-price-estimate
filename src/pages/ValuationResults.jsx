@@ -121,7 +121,7 @@ const ValuationResults = () => {
         <ButtonBar>
           <Button onClick={handleStartNew}>
             <RestartIcon width={20} height={20} fill="white" />
-            <span>Restart</span>
+            <span>New Estimate</span>
           </Button>
           <Button onClick={handleSave}>
             <SaveIcon width={20} height={20} fill="white" />

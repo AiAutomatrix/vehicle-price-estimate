@@ -134,7 +134,7 @@ function ImageAnalysis() {
           <p>Condition: {vehicleDetails.condition}</p>
         </DetectedDetails>
         <ButtonContainer>
-          <Button onClick={handleStartNew}>Start New</Button>
+          <Button onClick={handleStartNew}>New Estimate</Button>
           <Button onClick={handlePriceEstimate}>Price Estimate</Button>
         </ButtonContainer>
     </ImageAnalysisContainer>
