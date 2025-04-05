@@ -32,7 +32,6 @@ const ImageAnalysisLoading = () => {
       <ProgressLoader isLoading={true} />
       <ImageCarouselPlaceholder>
         {/* Image Carousel will be placed here */}
-        <p>Image Carousel Loading...</p>
       </ImageCarouselPlaceholder>
       <p>Analyzing your vehicle image...</p>
     </LoadingContainer>
