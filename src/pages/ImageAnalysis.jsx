@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Header from '../components/Header';
 
 const ImageAnalysisContainer = styled.div`
   display: flex;
@@ -108,36 +109,39 @@ function ImageAnalysis() {
   };
 
   return (
-    <ImageAnalysisContainer>
-      <h1>Image Analysis</h1>
-        {images && images.length > 0 ? (
-          <CarouselContainer>
-            {images.map((image, index) => (
-              <CarouselImage
-                key={index}
-                src={URL.createObjectURL(image)}
-                alt={`Uploaded Vehicle ${index + 1}`}
-              />
-            ))}
-          </CarouselContainer>
-        ) : (
-          <p>No images uploaded.</p>
-        )}
-        <MockAnalysis>
-          Simulated Image Analysis: Identifying vehicle make, model, and year...
-        </MockAnalysis>
-        <DetectedDetails>
-          <h3>Detected Vehicle Details:</h3>
-          <p>Make: {vehicleDetails.make}</p>
-          <p>Model: {vehicleDetails.model}</p>
-          <p>Year: {vehicleDetails.year}</p>
-          <p>Condition: {vehicleDetails.condition}</p>
-        </DetectedDetails>
-        <ButtonContainer>
-          <Button onClick={handleStartNew}>New Estimate</Button>
-          <Button onClick={handlePriceEstimate}>Price Estimate</Button>
-        </ButtonContainer>
-    </ImageAnalysisContainer>
+    <>
+      <Header />
+      <ImageAnalysisContainer>
+        <h1>Image Analysis</h1>
+          {images && images.length > 0 ? (
+            <CarouselContainer>
+              {images.map((image, index) => (
+                <CarouselImage
+                  key={index}
+                  src={URL.createObjectURL(image)}
+                  alt={`Uploaded Vehicle ${index + 1}`}
+                />
+              ))}
+            </CarouselContainer>
+          ) : (
+            <p>No images uploaded.</p>
+          )}
+          <MockAnalysis>
+            Simulated Image Analysis: Identifying vehicle make, model, and year...
+          </MockAnalysis>
+          <DetectedDetails>
+            <h3>Detected Vehicle Details:</h3>
+            <p>Make: {vehicleDetails.make}</p>
+            <p>Model: {vehicleDetails.model}</p>
+            <p>Year: {vehicleDetails.year}</p>
+            <p>Condition: {vehicleDetails.condition}</p>
+          </DetectedDetails>
+          <ButtonContainer>
+            <Button onClick={handleStartNew}>New Estimate</Button>
+            <Button onClick={handlePriceEstimate}>Price Estimate</Button>
+          </ButtonContainer>
+      </ImageAnalysisContainer>
+    </>
   );
 }
 

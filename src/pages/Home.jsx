@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import ImageUpload from '../components/ImageUpload';
-import VehicleForm from '../components/VehicleForm';
+import VehicleForm from './VehicleForm';
 import Header from '../components/Header';
 
 const HomeContainer = styled.div`
@@ -26,40 +26,15 @@ const Subtitle = styled.p`
   margin-bottom: 2rem;
 `;
 
-const Divider = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 1.5rem 0;
-  color: ${({ theme }) => theme.colors.textSecondary};
-
-  &::before, &::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  }
-
-  &::before {
-    margin-right: 1rem;
-  }
-
-  &::after {
-    margin-left: 1rem;
-  }
-`;
 
 const Home = () => {
   const navigate = useNavigate();
-  const [showForm, setShowForm] = useState(false);
 
   const handleImageUpload = (file) => {
    console.log('handleImageUpload called with:', file);
    // In a real app, you would upload the image to your backend
    console.log('Image uploaded:', file);
    navigate('/loading', { state: { images: file } });
-  };
-
-  const handleManualEntry = () => {
-    setShowForm(true);
   };
 
   const handleFormSubmit = (formData) => {
@@ -74,15 +49,8 @@ const Home = () => {
         <Title>Get Your Vehicle's Value</Title>
         <Subtitle>Upload a photo or enter details manually for an instant valuation</Subtitle>
         
-        {!showForm ? (
-          <>
-            <ImageUpload onImageUpload={handleImageUpload} />
-            <Divider>or</Divider>
-            <button onClick={handleManualEntry}>Enter Details Manually</button>
-          </>
-        ) : (
-          <VehicleForm onSubmit={handleFormSubmit} />
-        )}
+        <ImageUpload onImageUpload={handleImageUpload} />
+        <VehicleForm onSubmit={handleFormSubmit} />
       </HomeContainer>
     </>
   );

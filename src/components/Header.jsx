@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
 import { ReactComponent as HistoryIcon } from '../assets/icons/history.svg';
 import { ReactComponent as SettingsIcon } from '../assets/icons/settings.svg';
+import { ReactComponent as SaveIcon } from '../assets/icons/save.svg';
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -39,7 +40,27 @@ const NavIcon = styled.div`
 `;
 
 const Header = () => {
+  const [isHistoryOpen, setIsHistoryOpen] = React.useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const navigate = useNavigate();
+
+  const handleHistoryClick = () => {
+    if (isHistoryOpen) {
+      navigate('/'); // Navigate to home if already open
+    } else {
+      navigate('/history');
+    }
+    setIsHistoryOpen(!isHistoryOpen);
+  };
+
+  const handleSettingsClick = () => {
+    if (isSettingsOpen) {
+      navigate('/'); // Navigate to home if already open
+    } else {
+      navigate('/settings');
+    }
+    setIsSettingsOpen(!isSettingsOpen);
+  };
 
   return (
     <HeaderContainer>
@@ -47,10 +68,13 @@ const Header = () => {
         <Logo width={120} height={40} />
       </LogoContainer>
       <NavItems>
-        <NavIcon onClick={() => navigate('/history')}>
+        <NavIcon onClick={handleHistoryClick}>
           <HistoryIcon width={20} height={20} fill="currentColor" />
         </NavIcon>
-        <NavIcon onClick={() => navigate('/settings')}>
+        <NavIcon onClick={() => navigate('/saved-reports')}>
+          <SaveIcon width={20} height={20} fill="currentColor" />
+        </NavIcon>
+        <NavIcon onClick={handleSettingsClick}>
           <SettingsIcon width={20} height={20} fill="currentColor" />
         </NavIcon>
       </NavItems>

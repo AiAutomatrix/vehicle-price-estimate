@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactComponent as ShareIcon } from '../assets/icons/share.svg';
 import { ReactComponent as RestartIcon } from '../assets/icons/restart.svg';
@@ -63,7 +63,41 @@ const ShareButton = styled(Button)`
   flex-direction: row;
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
+
+const SaveConfirmation = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(90deg, ${({ theme }) => theme.colors.success}, ${({ theme }) => theme.colors.primary});
+  background-size: 200% 200%;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: ${({ theme }) => theme.radii.md};
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  animation: ${fadeIn} 0.3s ease-out, ${fadeOut} 0.3s ease-in 2.7s forwards;
+`;
+
 const ValuationResults = () => {
+  const [isSaveConfirmed, setIsSaveConfirmed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const vehicle = location.state?.vehicleDetails || {
@@ -91,9 +125,18 @@ const ValuationResults = () => {
     navigate('/');
   };
 
-  const handleSave = () => {
-    console.log('Saving valuation report');
-    // Implement save functionality
+   const handleSave = async () => {
+    const report = {
+      vehicle: vehicle,
+      valuation: valuation,
+    };
+    const reportId = Date.now();
+    localStorage.setItem(`report-${reportId}`, JSON.stringify(report));
+    console.log('Valuation report saved:', reportId, report);
+    setIsSaveConfirmed(true);
+    setTimeout(() => {
+      setIsSaveConfirmed(false);
+    }, 2000);
   };
 
   const handleShare = () => {
@@ -104,6 +147,7 @@ const ValuationResults = () => {
   return (
     <>
       <Header />
+      {isSaveConfirmed && <SaveConfirmation>Report Saved!</SaveConfirmation>}
       <ResultsContainer>
         <ResultsHeader>
           <VehicleTitle>{vehicle.year} {vehicle.make} {vehicle.model}</VehicleTitle>
