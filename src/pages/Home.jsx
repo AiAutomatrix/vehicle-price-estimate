@@ -52,9 +52,10 @@ const Home = () => {
   const [showForm, setShowForm] = useState(false);
 
   const handleImageUpload = (file) => {
-    // In a real app, you would upload the image to your backend
-    console.log('Image uploaded:', file);
-    navigate('/analyze');
+   console.log('handleImageUpload called with:', file);
+   // In a real app, you would upload the image to your backend
+   console.log('Image uploaded:', file);
+   navigate('/loading', { state: { images: file } });
   };
 
   const handleManualEntry = () => {
@@ -63,7 +64,7 @@ const Home = () => {
 
   const handleFormSubmit = (formData) => {
     console.log('Form submitted:', formData);
-    navigate('/results');
+    navigate('/results', { state: { vehicleDetails: formData } });
   };
 
   return (

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+// import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ReactComponent as UploadIcon } from '../assets/icons/upload.svg';
 import { ReactComponent as CameraIcon } from '../assets/icons/camera.svg';
@@ -27,45 +28,44 @@ const UploadText = styled.p`
   margin: 0;
 `;
 
-const PreviewImage = styled.img`
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: ${({ theme }) => theme.radii.md};
-`;
+
 
 const ImageUpload = ({ onImageUpload }) => {
-  const [preview, setPreview] = useState(null);
+  // const navigate = useNavigate();
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const files = Array.from(e.target.files);
+    const newPreviews = [];
+    const uploadedFiles = [];
+
+    files.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);
-        onImageUpload(file);
+        newPreviews.push(reader.result);
+        if (newPreviews.length === files.length) {
+          onImageUpload(uploadedFiles);
+        }
       };
       reader.readAsDataURL(file);
-    }
+      uploadedFiles.push(file);
+    });
   };
 
   return (
     <label>
-      <input 
-        type="file" 
-        accept="image/*" 
-        onChange={handleImageChange} 
-        style={{ display: 'none' }} 
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        style={{ display: 'none' }}
+        multiple // Allow multiple files
       />
       <ImageUploadContainer>
-        {preview ? (
-          <PreviewImage src={preview} alt="Vehicle preview" />
-        ) : (
-          <>
-            <UploadIcon width={48} height={48} fill="#2563eb" />
-            <UploadText>Upload vehicle photo</UploadText>
-            <CameraIcon width={24} height={24} fill="#64748b" />
-          </>
-        )}
+        <>
+          <UploadIcon width={48} height={48} fill="#2563eb" />
+          <UploadText>Upload vehicle photos</UploadText>
+          <CameraIcon width={24} height={24} fill="#64748b" />
+        </>
       </ImageUploadContainer>
     </label>
   );

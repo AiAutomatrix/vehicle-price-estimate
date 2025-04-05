@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactComponent as ShareIcon } from '../assets/icons/share.svg';
+import { ReactComponent as RestartIcon } from '../assets/icons/restart.svg';
+import { ReactComponent as SaveIcon } from '../assets/icons/save.svg';
 import Header from '../components/Header';
 import PriceDisplay from '../components/PriceDisplay';
 import PriceBreakdown from '../components/PriceBreakdown';
@@ -30,11 +33,18 @@ const VehicleSubtitle = styled.p`
   margin: 0;
 `;
 
-const ShareButton = styled.button`
+const ButtonBar = styled.div`
   display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+`;
+
+const Button = styled.button`
+  display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  margin: 0 auto;
   padding: 0.75rem 1.5rem;
   background-color: ${({ theme }) => theme.colors.primary};
   color: white;
@@ -49,13 +59,18 @@ const ShareButton = styled.button`
   }
 `;
 
+const ShareButton = styled(Button)`
+  flex-direction: row;
+`;
+
 const ValuationResults = () => {
-  // Mock data
-  const vehicle = {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const vehicle = location.state?.vehicleDetails || {
     make: 'Toyota',
     model: 'Camry',
     year: '2020',
-    mileage: '45,000',
+    mileage: '45000',
   };
 
   const valuation = {
@@ -70,6 +85,15 @@ const ValuationResults = () => {
       high: '$27,000',
       current: '$24,500',
     },
+  };
+
+  const handleStartNew = () => {
+    navigate('/');
+  };
+
+  const handleSave = () => {
+    console.log('Saving valuation report');
+    // Implement save functionality
   };
 
   const handleShare = () => {
@@ -94,10 +118,20 @@ const ValuationResults = () => {
         />
         <PriceBreakdown items={valuation.breakdown} />
         
-        <ShareButton onClick={handleShare}>
-          <ShareIcon width={20} height={20} fill="white" />
-          Share Report
-        </ShareButton>
+        <ButtonBar>
+          <Button onClick={handleStartNew}>
+            <RestartIcon width={20} height={20} fill="white" />
+            <span>Restart</span>
+          </Button>
+          <Button onClick={handleSave}>
+            <SaveIcon width={20} height={20} fill="white" />
+            <span>Save Report</span>
+          </Button>
+          <ShareButton onClick={handleShare}>
+            <ShareIcon width={20} height={20} fill="white" />
+            <span>Share Report</span>
+          </ShareButton>
+        </ButtonBar>
       </ResultsContainer>
     </>
   );

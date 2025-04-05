@@ -2,15 +2,18 @@ import React from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
-  Routes,
-  Route,
+//   Routes,
+//   Route,
 } from "react-router-dom";
 import { ThemeProvider } from 'styled-components';
 import { lightTheme, darkTheme } from './styles/theme';
-import * as GlobalStyles from './styles/GlobalStyles';
+import GlobalStyles from './styles/GlobalStyles';
 import { useState } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+
 
 import Home from './pages/Home';
+import Loading from './pages/Loading';
 import ImageAnalysis from './pages/ImageAnalysis';
 import ValuationResults from './pages/ValuationResults';
 import History from './pages/History';
@@ -31,7 +34,15 @@ function App() {
       },
       {
         path: "/analyze",
-        element: <ImageAnalysis />,
+        element: (
+          <ErrorBoundary>
+            <ImageAnalysis />
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: "/loading",
+        element: <Loading />,
       },
       {
         path: "/results",
@@ -56,7 +67,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-      <GlobalStyles.default />
+      <GlobalStyles />
       <RouterProvider router={router} />
     </ThemeProvider>
   );
