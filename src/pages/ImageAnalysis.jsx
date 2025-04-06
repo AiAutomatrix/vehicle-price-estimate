@@ -88,12 +88,14 @@ const Button = styled.button`
     transform: translateY(-2px);
   }
 `;
+import { useAppContext } from '../context/AppContext';
 
 function ImageAnalysis() {
+  const { setImages } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
   const images = location.state?.images || [];
-  const vehicleDetails = {
+  const vehicleDetails = location.state?.vehicleDetails || {
     make: 'Toyota',
     model: 'Camry',
     year: '2020',
@@ -101,6 +103,7 @@ function ImageAnalysis() {
   };
 
   const handleStartNew = () => {
+    setImages([]);
     navigate('/');
   };
 
@@ -118,7 +121,7 @@ function ImageAnalysis() {
               {images.map((image, index) => (
                 <CarouselImage
                   key={index}
-                  src={URL.createObjectURL(image)}
+                  src={image}
                   alt={`Uploaded Vehicle ${index + 1}`}
                 />
               ))}

@@ -1,3 +1,4 @@
+import ImageUpload from '../components/ImageUpload';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -187,7 +188,11 @@ const VehicleForm = ({ onSubmit }) => {
           {errors.mileage && <ErrorMessage>{errors.mileage}</ErrorMessage>}
         </FormGroup>
 
-        <Button type="submit">Get Valuation</Button>
+        <div style={{display: 'flex', gap: '1rem'}}>
+          <ImageUpload onImageUpload={(images) => {
+          }}/>
+          <Button type="submit">Get Valuation</Button>
+        </div>
       </form>
     </FormContainer>
   );

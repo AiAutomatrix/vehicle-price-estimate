@@ -2,6 +2,7 @@ import React from 'react';
 // import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ReactComponent as UploadIcon } from '../assets/icons/upload.svg';
+// eslint-disable-next-line no-unused-vars
 import { ReactComponent as CameraIcon } from '../assets/icons/camera.svg';
 
 const ImageUploadContainer = styled.div`
@@ -13,16 +14,20 @@ const ImageUploadContainer = styled.div`
   flex-direction: row; /* Arrange icon and text horizontally */
   align-items: center;
   justify-content: center;
-  padding-top: 0.6rem; /* Even shorter top padding */
-  padding-bottom: 0.5rem; /* Even shorter bottom padding */
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   padding-left: 2rem;
   padding-right: 2rem;
   gap: 1rem; /* Adjust gap for horizontal layout */
-  background-color: ${({ theme }) => theme.colors.primary}; /* Primary color background */
-  color: white; /* White text color */
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: ${({ theme }) => theme.radii.md};
+  /* border-radius: 50%;  Make button round */
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
-  box-shadow: ${({ theme }) => theme.shadows.md}; /* Add shadow */
+  transition: all 0.2s ease;
+  box-shadow: ${({ theme }) => theme.shadows.md};
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryDark}; /* Darker primary on hover */
@@ -43,7 +48,10 @@ const UploadText = styled.p`
 `;
 
 
-const ImageUpload = ({ onImageUpload }) => {
+import { useAppContext } from '../context/AppContext';
+
+const ImageUpload = ({}) => {
+  const { setImages } = useAppContext();
   // const navigate = useNavigate();
 
   const handleImageChange = (e) => {
@@ -56,7 +64,7 @@ const ImageUpload = ({ onImageUpload }) => {
       reader.onloadend = () => {
         newPreviews.push(reader.result);
         if (newPreviews.length === files.length) {
-          onImageUpload(uploadedFiles);
+          setImages(newPreviews);
         }
       };
       reader.readAsDataURL(file);

@@ -11,7 +11,7 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Open Sans', sans-serif; /* Default body font */
     line-height: 1.5;
     background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.textPrimary};
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 

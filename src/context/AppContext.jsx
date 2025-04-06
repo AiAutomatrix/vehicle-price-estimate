@@ -8,6 +8,11 @@ export const AppProvider = ({ children }) => {
   const [valuationHistory, setValuationHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([]);
+
+  const setImages = (images) => {
+    setUploadedImages(images);
+  };
 
   const analyzeImage = async (imageFile) => {
     setIsLoading(true);
@@ -118,7 +123,9 @@ export const AppProvider = ({ children }) => {
         estimateValue,
         loadHistory,
         setVehicleData,
-        clearError: () => setError(null)
+        clearError: () => setError(null),
+        setImages,
+        uploadedImages
       }}
     >
       {children}

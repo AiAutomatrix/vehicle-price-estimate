@@ -1,4 +1,5 @@
 import React from 'react';
+import { AppProvider } from './context/AppContext';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -84,7 +85,9 @@ function App() {
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyles />
-      <RouterProvider router={router} />
+      <AppProvider>
+        <RouterProvider router={router} />
+      </AppProvider>
     </ThemeProvider>
   );
 }

@@ -95,9 +95,11 @@ const SaveConfirmation = styled.div`
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   animation: ${fadeIn} 0.3s ease-out, ${fadeOut} 0.3s ease-in 2.7s forwards;
 `;
+import { useAppContext } from '../context/AppContext';
 
 const ValuationResults = () => {
   const [isSaveConfirmed, setIsSaveConfirmed] = useState(false);
+  const { setImages } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
   const vehicle = location.state?.vehicleDetails || {
@@ -122,6 +124,7 @@ const ValuationResults = () => {
   };
 
   const handleStartNew = () => {
+    setImages([]);
     navigate('/');
   };
 

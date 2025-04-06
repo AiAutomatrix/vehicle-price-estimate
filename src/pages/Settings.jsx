@@ -59,6 +59,16 @@ const Select = styled.select`
   color: ${({ theme }) => theme.colors.text};
 `;
 
+const Option = styled.option`
+  background-color: ${({ theme, selected }) =>
+    selected ? theme.colors.primary : theme.colors.background};
+  color: ${({ theme }) => theme.isDarkMode ? theme.colors.textPrimary : theme.colors.textPrimary};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryLight};
+  }
+`;
+
 
 const Settings = ({ toggleTheme, theme }) => {
   const handleChangeTheme = (e) => {
@@ -84,8 +94,8 @@ const Settings = ({ toggleTheme, theme }) => {
               value={theme}
               onChange={handleChangeTheme}
             >
-              <option value="light">Light Mode</option>
-              <option value="dark">Dark Mode</option>
+              <Option selected={theme === 'light'} value="light">Light Mode</Option>
+              <Option selected={theme === 'dark'} value="dark">Dark Mode</Option>
             </Select>
           </SettingItem>
         </SettingsSection>

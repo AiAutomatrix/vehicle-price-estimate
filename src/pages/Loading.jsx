@@ -9,13 +9,14 @@ function Loading() {
   const navigate = useNavigate();
   const location = useLocation();
   const images = useMemo(() => location.state?.images || [], [location.state?.images]);
+  const vehicleDetails = useMemo(() => location.state?.vehicleDetails || {}, [location.state?.vehicleDetails]);
 
   useEffect(() => {
     // Simulate loading process
     setTimeout(() => {
-      navigate('/analyze', { state: { images } });
+      navigate('/analyze', { state: { images, vehicleDetails } });
     }, 2000);
-  }, [navigate, images]);
+  }, [navigate, images, vehicleDetails]);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

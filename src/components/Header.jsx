@@ -10,36 +10,42 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: ${({ theme }) => theme.colors.card};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
+  padding: 1.5rem 2rem;
+  background-color: ${({ theme }) => theme.colors.surface};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border}; /* Add border bottom */
 `;
 
 const LogoContainer = styled.div`
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;
 
 const NavItems = styled.div`
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
+  align-items: center;
 `;
 
 const NavIcon = styled.div`
   cursor: pointer;
   display: flex;
-  align-items: center;
+  border-radius: 8px;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 40px;;
+  height: 40px;;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primary}20;
-  }
+    background-color: ${({ theme }) => theme.colors.secondary};
+    color: ${({ theme }) => theme.colors.text};
+  };
 `;
+import { useAppContext } from '../context/AppContext';
 
 const Header = () => {
+  const { setImages } = useAppContext();
   const [isHistoryOpen, setIsHistoryOpen] = React.useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -64,8 +70,12 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <LogoContainer onClick={() => navigate('/')}>
-        <Logo width={120} height={40} />
+      <LogoContainer onClick={() => {
+        setImages([]);
+        navigate('/');
+      }}>
+        <Logo width={40} height={40} />
+        <span>Vehicle Valuation</span>
       </LogoContainer>
       <NavItems>
         <NavIcon onClick={handleHistoryClick}>

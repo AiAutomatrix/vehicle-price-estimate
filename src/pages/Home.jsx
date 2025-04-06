@@ -1,6 +1,9 @@
 import React from 'react';
+import ImageCarousel from '../components/ImageCarousel';
+import { useAppContext } from '../context/AppContext';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import ImageUpload from '../components/ImageUpload';
 import VehicleForm from './VehicleForm';
 import Header from '../components/Header';
@@ -29,13 +32,15 @@ const Subtitle = styled.p`
 const Home = () => {
   const navigate = useNavigate();
 
+// eslint-disable-next-line no-unused-vars
   const handleImageUpload = (file) => {
    navigate('/loading', { state: { images: file } });
   };
-
   const handleFormSubmit = (formData) => {
-    navigate('/results', { state: { vehicleDetails: formData } });
+    navigate('/loading', { state: { vehicleDetails: formData, images: uploadedImages } });
   };
+
+  const { uploadedImages } = useAppContext();
 
   return (
     <>
@@ -43,7 +48,9 @@ const Home = () => {
       <HomeContainer>
         <Title>Get Your Vehicle's Value</Title>
         <Subtitle>Upload a photo or enter details manually</Subtitle>
-        <ImageUpload onImageUpload={handleImageUpload} />
+        {uploadedImages.length > 0 && (
+          <ImageCarousel images={uploadedImages} />
+        )}
         <VehicleForm onSubmit={handleFormSubmit} />
       </HomeContainer>
     </>
