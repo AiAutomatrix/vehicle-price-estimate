@@ -8,6 +8,8 @@ import Header from '../components/Header';
 import PriceDisplay from '../components/PriceDisplay';
 import PriceBreakdown from '../components/PriceBreakdown';
 import ValueRange from '../components/ValueRange';
+import { useAppContext } from '../context/AppContext';
+
 
 const ResultsContainer = styled.div`
   max-width: 800px;
@@ -95,7 +97,6 @@ const SaveConfirmation = styled.div`
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   animation: ${fadeIn} 0.3s ease-out, ${fadeOut} 0.3s ease-in 2.7s forwards;
 `;
-import { useAppContext } from '../context/AppContext';
 
 const ValuationResults = () => {
   const [isSaveConfirmed, setIsSaveConfirmed] = useState(false);

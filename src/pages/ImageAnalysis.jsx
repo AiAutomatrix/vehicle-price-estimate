@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from '../components/Header';
+import { useAppContext } from '../context/AppContext';
+
 
 const ImageAnalysisContainer = styled.div`
   display: flex;
@@ -88,7 +90,6 @@ const Button = styled.button`
     transform: translateY(-2px);
   }
 `;
-import { useAppContext } from '../context/AppContext';
 
 function ImageAnalysis() {
   const { setImages } = useAppContext();
