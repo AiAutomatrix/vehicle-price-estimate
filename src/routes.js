@@ -1,3 +1,4 @@
+import React from 'react';
 import { lazy } from 'react';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -15,6 +16,10 @@ export const routes = [
   {
     path: '/analyze',
     component: ImageAnalysis,
+  },
+  {
+    path: '/loading2',
+    component: Loading2,
   },
   {
     path: '/results',

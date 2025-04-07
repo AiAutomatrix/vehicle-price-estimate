@@ -12,6 +12,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 import Home from './pages/Home';
 import Loading from './pages/Loading';
+import Loading2 from './pages/Loading2';
 import ImageAnalysis from './pages/ImageAnalysis';
 import VehicleForm from './pages/VehicleForm';
 import ValuationResults from './pages/ValuationResults';
@@ -56,6 +57,10 @@ function App() {
       {
         path: "/loading",
         element: <Loading />,
+      },
+      {
+        path: "/loading2",
+        element: <Loading2 />,
       },
       {
         path: "/results",

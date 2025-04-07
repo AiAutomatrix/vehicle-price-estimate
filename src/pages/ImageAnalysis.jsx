@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Header from '../components/Header';
 import { useAppContext } from '../context/AppContext';
 
-
 const ImageAnalysisContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -108,10 +107,14 @@ function ImageAnalysis() {
     navigate('/');
   };
 
+  const ImageAnalysisComponent = () => {
+    const navigate = useNavigate();
+  const { uploadedImages } = useAppContext();
   const handlePriceEstimate = () => {
-    navigate('/results', { state: { vehicleDetails } });
+    navigate('/loading2', { state: { vehicleDetails, images: uploadedImages } });
   };
 
+  
   return (
     <>
       <Header />
@@ -147,6 +150,9 @@ function ImageAnalysis() {
       </ImageAnalysisContainer>
     </>
   );
+}
+
+  return <ImageAnalysisComponent />;
 }
 
 export default ImageAnalysis;
