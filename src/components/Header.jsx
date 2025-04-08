@@ -1,7 +1,8 @@
 import React from 'react';
+import { useAppContext } from '../context/AppContext';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { ReactComponent as Logo } from '../assets/images/logo.svg';
+import Logo from '../assets/images/logo-transparent.png';
 import { ReactComponent as HistoryIcon } from '../assets/icons/history.svg';
 import { ReactComponent as SettingsIcon } from '../assets/icons/settings.svg';
 import { ReactComponent as SaveIcon } from '../assets/icons/save.svg';
@@ -11,7 +12,7 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  background-color: ${({ theme }) => theme.colors.surface};
+  background-color: ${({ theme }) => theme.colors.headerBackground};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border}; /* Add border bottom */
 `;
 
@@ -42,7 +43,6 @@ const NavIcon = styled.div`
     color: ${({ theme }) => theme.colors.text};
   };
 `;
-import { useAppContext } from '../context/AppContext';
 
 const Header = () => {
   const { setImages } = useAppContext();
@@ -74,18 +74,17 @@ const Header = () => {
         setImages([]);
         navigate('/');
       }}>
-        <Logo width={40} height={40} />
-        <span>Vehicle Valuation</span>
+        <img src={Logo} alt="Vehicle Valuation Logo" width={180} height={80} />
       </LogoContainer>
       <NavItems>
         <NavIcon onClick={handleHistoryClick}>
-          <HistoryIcon width={20} height={20} fill="currentColor" />
+          <HistoryIcon width={30} height={30} fill="currentColor" />
         </NavIcon>
         <NavIcon onClick={() => navigate('/saved-reports')}>
-          <SaveIcon width={20} height={20} fill="currentColor" />
+          <SaveIcon width={30} height={30} fill="currentColor" />
         </NavIcon>
         <NavIcon onClick={handleSettingsClick}>
-          <SettingsIcon width={20} height={20} fill="currentColor" />
+          <SettingsIcon width={30} height={30} fill="currentColor" />
         </NavIcon>
       </NavItems>
     </HeaderContainer>

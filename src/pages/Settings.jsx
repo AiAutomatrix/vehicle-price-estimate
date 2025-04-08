@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAppContext } from '../context/AppContext';
 import styled from 'styled-components';
 import { ReactComponent as SettingsIcon } from '../assets/icons/settings.svg';
 import Header from '../components/Header';
@@ -70,8 +71,10 @@ const Option = styled.option`
 `;
 
 
+
 const Settings = ({ toggleTheme, theme }) => {
-  const handleChangeTheme = (e) => {
+  const { currency, setCurrency, distanceUnit, setDistanceUnit } = useAppContext();
+    const handleChangeTheme = (e) => {
     toggleTheme(e.target.value);
   };
 
@@ -104,17 +107,24 @@ const Settings = ({ toggleTheme, theme }) => {
           <SectionTitle>Units</SectionTitle>
           <SettingItem>
             <SettingLabel>Distance</SettingLabel>
-            <Select>
-              <option>Miles</option>
-              <option>Kilometers</option>
+            <Select
+              value={distanceUnit}
+              onChange={(e) => setDistanceUnit(e.target.value)}
+            >
+              <option value="miles">Miles</option>
+              <option value="kilometers">Kilometers</option>
             </Select>
           </SettingItem>
           <SettingItem>
             <SettingLabel>Currency</SettingLabel>
-            <Select>
-              <option>USD ($)</option>
-              <option>EUR (€)</option>
-              <option>GBP (£)</option>
+            <Select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+            >
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="CAD">CAD (C$)</option>
             </Select>
           </SettingItem>
         </SettingsSection>

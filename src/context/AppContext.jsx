@@ -9,6 +9,8 @@ export const AppProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [currency, setCurrency] = useState('USD'); // Default currency
+  const [distanceUnit, setDistanceUnit] = useState('miles'); // Default distance unit
 
   const setImages = (images) => {
     setUploadedImages(images);
@@ -125,7 +127,11 @@ export const AppProvider = ({ children }) => {
         setVehicleData,
         clearError: () => setError(null),
         setImages,
-        uploadedImages
+        uploadedImages,
+        currency,
+        setCurrency,
+        distanceUnit,
+        setDistanceUnit
       }}
     >
       {children}

@@ -18,6 +18,7 @@ export const lightTheme = {
       warning: '#ffc107',
       error: '#f44336',
       text: '#333333', // Default text color for light theme
+      headerBackground: '#F5F5DC', // Beige header background
     },
     shadows: {
       sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -55,6 +56,7 @@ export const lightTheme = {
         error: '#f87171',
         info: '#67e8f9',
         text: '#f0f0f0', // Default text color for dark theme
+        headerBackground: '#4a3f35', // Darker beige for dark theme
       },
       shadows: {
         sm: '0 2px 4px 0 rgba(0, 0, 0, 0.3)', // Softer shadows

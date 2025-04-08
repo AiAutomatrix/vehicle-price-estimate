@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useAppContext } from '../context/AppContext';
 import { keyframes } from 'styled-components';
 
 const fadeIn = keyframes`
@@ -29,10 +30,29 @@ const PriceValue = styled.h1`
 `;
 
 const PriceDisplay = ({ price }) => {
+  const { currency } = useAppContext();
+
+  let currencySymbol;
+  switch (currency) {
+    case 'USD':
+      currencySymbol = '$';
+      break;
+    case 'EUR':
+      currencySymbol = '€';
+      break;
+    case 'GBP':
+      currencySymbol = '£';
+      break;
+    case 'CAD':
+      currencySymbol = 'C$';
+      break;
+    default:
+      currencySymbol = '$';
+  }
   return (
     <PriceContainer>
       <PriceLabel>Estimated Value</PriceLabel>
-      <PriceValue>{price}</PriceValue>
+      <PriceValue>{currencySymbol}{price.replace(/[^0-9.]/g, '')}</PriceValue>
     </PriceContainer>
   );
 };

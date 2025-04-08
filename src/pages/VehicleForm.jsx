@@ -1,4 +1,5 @@
 import ImageUpload from '../components/ImageUpload';
+import { useAppContext } from '../context/AppContext';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -81,6 +82,7 @@ const MODELS = {
 const YEARS = Array.from({ length: 25 }, (_, i) => 2023 - i);
 
 const VehicleForm = ({ onSubmit }) => {
+  const { distanceUnit } = useAppContext();
   const [formData, setFormData] = useState({
     make: '',
     model: '',
@@ -175,7 +177,7 @@ const VehicleForm = ({ onSubmit }) => {
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="mileage">Mileage</Label>
+          <Label htmlFor="mileage">Units ({distanceUnit.charAt(0).toUpperCase() + distanceUnit.slice(1)})</Label>
           <Input
             type="number"
             id="mileage"
