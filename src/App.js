@@ -53,7 +53,7 @@ function App() {
       {
         path: "/manual-entry",
         element: <VehicleForm />,
-      },      
+      },
       {
         path: "/loading",
         element: <Loading />,

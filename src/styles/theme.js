@@ -4,9 +4,9 @@ export const lightTheme = {
       primary: '#6b8bbd', // Muted blue-gray
       primaryLight: '#9bb7de',
       primaryDark: '#4a6572',
-      background: '#f2f2f2', // Light gray background - slightly darker
-      card: '#ffffff', // White cards
-      surface: '#ffffff',
+      background: '#E0DACD', // Muted Beige
+      card: '#F5F5DC', // Beige
+      surface: '#FFF8DC', // Cornsilk
       backgroundSecondary: '#f0f0f0', // Slightly darker light gray
       textPrimary: '#333333', // Dark gray text
       textSecondary: '#555555', // Medium gray text
@@ -56,7 +56,7 @@ export const lightTheme = {
         error: '#f87171',
         info: '#67e8f9',
         text: '#f0f0f0', // Default text color for dark theme
-        headerBackground: '#4a3f35', // Darker beige for dark theme
+        headerBackground: '#374151', // Darker beige for dark theme
       },
       shadows: {
         sm: '0 2px 4px 0 rgba(0, 0, 0, 0.3)', // Softer shadows
