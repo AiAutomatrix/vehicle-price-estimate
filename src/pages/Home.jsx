@@ -37,7 +37,9 @@ const Home = () => {
    navigate('/loading', { state: { images: file } });
   };
   const handleFormSubmit = (formData) => {
-    navigate('/loading', { state: { vehicleDetails: formData, images: uploadedImages } });
+    const hasImages = uploadedImages.length > 0;
+    const targetRoute = hasImages ? '/loading' : '/loading2';
+    navigate(targetRoute, { state: { vehicleDetails: formData, images: uploadedImages } });
   };
 
   const { uploadedImages } = useAppContext();
