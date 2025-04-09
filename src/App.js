@@ -19,6 +19,9 @@ import ValuationResults from './pages/ValuationResults';
 import History from './pages/History';
 import Settings from './pages/Settings';
 import SavedReports from './pages/SavedReports';
+import CreateAd from './pages/CreateAd';
+import CommonProblems from './pages/CommonProblems';
+import VehicleReviews from './pages/VehicleReviews';
 
 function App() {
   const storedTheme = localStorage.getItem('theme') || 'light';
@@ -78,6 +81,18 @@ function App() {
        path: "/saved-reports",
        element: <SavedReports />,
      },
+     {
+      path: "/create-ad",
+      element: <CreateAd />,
+    },
+    {
+      path: "/common-problems",
+      element: <CommonProblems />,
+    },
+    {
+      path: "/vehicle-reviews",
+      element: <VehicleReviews />,
+    },
     ],
     {
       future: {

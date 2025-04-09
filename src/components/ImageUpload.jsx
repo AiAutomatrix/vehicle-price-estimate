@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { ReactComponent as UploadIcon } from '../assets/icons/upload.svg';
 // eslint-disable-next-line no-unused-vars
 import { ReactComponent as CameraIcon } from '../assets/icons/camera.svg';
+import { useAppContext } from '../context/AppContext';
+
 
 const ImageUploadContainer = styled.div`
   width: 100%; /* Make button width match VehicleForm section width */
@@ -48,9 +50,8 @@ const UploadText = styled.p`
 `;
 
 
-import { useAppContext } from '../context/AppContext';
 
-const ImageUpload = ({}) => {
+const ImageUpload = () => {
   const { setImages } = useAppContext();
   // const navigate = useNavigate();
 

@@ -180,6 +180,17 @@ const ValuationResults = () => {
             <span>Share Report</span>
           </ShareButton>
         </ButtonBar>
+        <ButtonBar>
+          <Button onClick={() => navigate('/create-ad', { state: { vehicle } })}>
+            <span>Create Vehicle Ad</span>
+          </Button>
+          <Button onClick={() => navigate('/common-problems', { state: { vehicle } })}>
+            <span>Research Common Problems</span>
+          </Button>
+          <Button onClick={() => navigate('/vehicle-reviews', { state: { vehicle } })}>
+            <span>Get Vehicle Reviews</span>
+          </Button>
+        </ButtonBar>
       </ResultsContainer>
     </>
   );
