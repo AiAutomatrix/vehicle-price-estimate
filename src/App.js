@@ -1,114 +1,95 @@
-import React from 'react';
-import { AppProvider } from './context/AppContext';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import React, { useCallback, lazy, Suspense } from 'react';
+import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme } from './styles/theme';
-import GlobalStyles from './styles/GlobalStyles';
-import { useState } from 'react';
-import ErrorBoundary from './components/ErrorBoundary';
 
-import Home from './pages/Home';
-import Loading from './pages/Loading';
-import Loading2 from './pages/Loading2';
-import ImageAnalysis from './pages/ImageAnalysis';
-import VehicleForm from './pages/VehicleForm';
-import ValuationResults from './pages/ValuationResults';
-import History from './pages/History';
+import { AppProvider, useAppContext } from './context/AppContext';
+
 import Settings from './pages/Settings';
 import SavedReports from './pages/SavedReports';
 import CreateAd from './pages/CreateAd';
 import CommonProblems from './pages/CommonProblems';
 import VehicleReviews from './pages/VehicleReviews';
+import { lightTheme, darkTheme } from './styles/theme';
+import GlobalStyles from './styles/GlobalStyles';
+import ErrorBoundary from './components/ErrorBoundary';
+const Home = lazy(() => import('./pages/Home'));
+const Loading = lazy(() => import('./pages/Loading'));
+const Loading2 = lazy(() => import('./pages/Loading2'));
+const ImageAnalysis = lazy(() => import('./pages/ImageAnalysis'));
+const VehicleForm = lazy(() => import('./pages/VehicleForm'));
+const ValuationResults = lazy(() => import('./pages/ValuationResults'));
+const History = lazy(() => import('./pages/History'));
 
-function App() {
-  const storedTheme = localStorage.getItem('theme') || 'light';
-  const [theme, setTheme] = useState(storedTheme);
-
-  const toggleTheme = (selectedTheme) => {
-    console.log('toggleTheme called with theme:', selectedTheme);
-    console.log('Current theme state (before setTheme):', theme); // Log before setTheme
-    localStorage.setItem('theme', selectedTheme);
-    setTheme(selectedTheme);
-    console.log('Current theme state (after setTheme):', theme); // Log after setTheme
+const ManualEntryWithContext = () => {
+    const { setVehicleData } = useAppContext();
+    const navigate = useNavigate();
+    const handleSubmit = useCallback((formData) => {
+      setVehicleData(formData);
+      navigate('/results', { state: { vehicleDetails: formData } });
+    }, [setVehicleData, navigate]);
+    return <VehicleForm onSubmit={handleSubmit} />;
   };
-
-  console.log('App component rendering with theme:', theme); // Log in render
-
-  console.log('Initial theme:', theme);
-
-  const router = createBrowserRouter(
-    [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/analyze",
+// Define routes configuration
+const routes =  [
+    { path: '/', element: <Suspense fallback={<div>Loading...</div>}><Home /></Suspense> },
+    {
+        path: '/analyze',
         element: (
-          <ErrorBoundary>
-            <ImageAnalysis />
-          </ErrorBoundary>
+            <ErrorBoundary>
+                <Suspense fallback={<div>Loading...</div>}><ImageAnalysis /></Suspense>
+            </ErrorBoundary>
         ),
-      },
-      {
-        path: "/manual-entry",
-        element: <VehicleForm />,
-      },
-      {
-        path: "/loading",
-        element: <Loading />,
-      },
-      {
-        path: "/loading2",
-        element: <Loading2 />,
-      },
-      {
-        path: "/results",
-        element: <ValuationResults />,
-      },
-      {
-        path: "/history",
-        element: <History />,
-      },
-      {
-        path: "/settings",
-        element: <Settings toggleTheme={toggleTheme} theme={theme} />,
-      },
-     {
-       path: "/saved-reports",
-       element: <SavedReports />,
-     },
-     {
-      path: "/create-ad",
-      element: <CreateAd />,
     },
-    {
-      path: "/common-problems",
-      element: <CommonProblems />,
-    },
-    {
-      path: "/vehicle-reviews",
-      element: <VehicleReviews />,
-    },
-    ],
-    {
-      future: {
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      },
-    }
-  );
+    { path: "/manual-entry", element: <Suspense fallback={<div>Loading...</div>}><ManualEntryWithContext /></Suspense> },
+    { path: '/loading', element: <Suspense fallback={<div>Loading...</div>}><Loading /></Suspense> },
+    { path: '/loading2', element: <Suspense fallback={<div>Loading...</div>}><Loading2 /></Suspense> },
+    { path: '/results', element: <Suspense fallback={<div>Loading...</div>}><ValuationResults /></Suspense> },
+    { path: '/history', element: <Suspense fallback={<div>Loading...</div>}><History /></Suspense> },
+    { path: '/settings', element: <Suspense fallback={<div>Loading...</div>}><Settings /></Suspense> },
+    { path: "/saved-reports", element: <Suspense fallback={<div>Loading...</div>}><SavedReports /></Suspense> },
+    { path: "/create-ad", element: <Suspense fallback={<div>Loading...</div>}><CreateAd /></Suspense> },
+    { path: "/common-problems", element: <Suspense fallback={<div>Loading...</div>}><CommonProblems /></Suspense> },
+    { path: "/vehicle-reviews", element: <Suspense fallback={<div>Loading...</div>}><VehicleReviews /></Suspense> },
+
+
+];
+
+// Create a component that consumes the context and provides the theme
+function ThemedAppContent() {
+  const { themeMode } = useAppContext(); // Get themeMode from context
+  const currentTheme = themeMode === 'light' ? lightTheme : darkTheme;
+
+  console.log('ThemedAppContent rendering with themeMode:', themeMode); // Log theme mode
 
   return (
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-      <GlobalStyles />
-      <AppProvider>
-        <RouterProvider router={router} />
-      </AppProvider>
+    <ThemeProvider theme={currentTheme}>
+        <GlobalStyles />
+        <RouterProvider
+        router={createBrowserRouter(routes)}
+        future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+
+        }}
+      />
+
+
     </ThemeProvider>
+  );
+}
+
+// Main App component wraps everything with the AppProvider
+function App({ children }) {
+  useAppContext();
+  console.log('App component rendering'); // Log when the App component renders
+  
+  
+
+
+  return (
+    <AppProvider>
+      <ThemedAppContent />
+    </AppProvider>
   );
 }
 

@@ -9,6 +9,7 @@ import PriceDisplay from '../components/PriceDisplay';
 import PriceBreakdown from '../components/PriceBreakdown';
 import ValueRange from '../components/ValueRange';
 import { useAppContext } from '../context/AppContext';
+import Footer from '../components/Footer';
 
 
 const ResultsContainer = styled.div`
@@ -192,7 +193,8 @@ const ValuationResults = () => {
           </Button>
         </ButtonBar>
       </ResultsContainer>
-    </>
+      <Footer />
+      </>
   );
 };
 

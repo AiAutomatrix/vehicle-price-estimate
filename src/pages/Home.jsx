@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import ImageUpload from '../components/ImageUpload';
 import VehicleForm from './VehicleForm';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const HomeContainer = styled.div`
   max-width: 800px;
@@ -15,6 +16,9 @@ const HomeContainer = styled.div`
   flex-direction: column;
   align-items: center !important; /* Force centering with !important */
   text-align: center;
+  background-color: ${({ theme }) => theme.colors.background};
+  padding: 2rem;
+  border-radius: ${({ theme }) => theme.radii.lg};
 `;
 
 const Title = styled.h1`
@@ -55,6 +59,7 @@ const Home = () => {
         )}
         <VehicleForm onSubmit={handleFormSubmit} />
       </HomeContainer>
+      <Footer />
     </>
   );
 };

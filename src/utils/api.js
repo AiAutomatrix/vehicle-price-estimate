@@ -1,3 +1,4 @@
+
 // Mock API functions for the Vehicle Value Estimator
 export const analyzeVehicleImage = async (imageFile) => {
     // In a real app, this would upload to your backend
@@ -75,4 +76,3 @@ export const analyzeVehicleImage = async (imageFile) => {
       ]
     };
   };
-  

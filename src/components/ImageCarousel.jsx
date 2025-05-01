@@ -10,6 +10,9 @@ const CarouselContainer = styled.div`
   margin-bottom: 1rem;
   overflow: hidden;
   position: relative;
+  background-color: ${({ theme }) => theme.colors.card};
+  border-radius: ${({ theme }) => theme.radii.md};
+  padding: 0.5rem;
 `;
 
 const CarouselImage = styled.img`
@@ -19,6 +22,7 @@ const CarouselImage = styled.img`
   scroll-snap-align: start;
   flex: none;
   margin-right: 10px;
+  border-radius: ${({ theme }) => theme.radii.sm};
 
   &:first-child {
     margin-left: 0;
@@ -58,10 +62,6 @@ const ImageCarousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const carouselRef = useRef(null);
-
-  const toggleIsPlaying = () => {
-    setIsPlaying(!isPlaying);
-  };
 
   useEffect(() => {
     let timer;
@@ -107,9 +107,6 @@ const ImageCarousel = ({ images }) => {
           />
         ))}
       </CarouselContainer>
-      <button onClick={toggleIsPlaying}>
-        {isPlaying ? 'Pause' : 'Play'}
-      </button>
     </div>
   );
 };

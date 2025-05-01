@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext } from 'react';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
+  // --- Existing State ---
   const [vehicleData, setVehicleData] = useState(null);
   const [valuationResult, setValuationResult] = useState(null);
   const [valuationHistory, setValuationHistory] = useState([]);
@@ -10,9 +11,30 @@ export const AppProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [previousPage, setPreviousPage] = useState('/');
-    const [currency, setCurrency] = useState('USD'); // Default currency
-  const [distanceUnit, setDistanceUnit] = useState('miles'); // Default distance unit
+  const [currency, setCurrency] = useState('USD');
+  const [distanceUnit, setDistanceUnit] = useState('miles');
 
+  // --- Theme State ---
+  // Initialize theme from localStorage or default to 'light'
+  const [themeMode, setThemeMode] = useState(() => {
+    const savedTheme = localStorage.getItem('themeMode');
+    return savedTheme || 'light';
+  });
+
+  // --- Theme Logic ---
+  // Function to toggle theme
+  const toggleTheme = () => {
+    setThemeMode((prevMode) => {
+      const newMode = prevMode === 'light' ? 'dark' : 'light';
+      localStorage.setItem('themeMode', newMode); // Save preference
+      return newMode;
+    });
+  };
+
+  
+
+
+  // --- Existing Functions ---
   const setImages = (images) => {
     setUploadedImages(images);
   };
@@ -117,6 +139,7 @@ export const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
+        // Existing values
         vehicleData,
         valuationResult,
         valuationHistory,
@@ -134,7 +157,10 @@ export const AppProvider = ({ children }) => {
         distanceUnit,
         setDistanceUnit,
         previousPage,
-        setPreviousPage
+        setPreviousPage,
+        // Theme values
+        themeMode, // 'light' or 'dark'
+        toggleTheme, // Function to switch modes
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -13,7 +13,7 @@ const HeaderContainer = styled.header`
   align-items: center;
   padding: 1.5rem 2rem;
   background-color: ${({ theme }) => theme.colors.headerBackground};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border}; /* Add border bottom */
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const LogoContainer = styled.div`
@@ -32,16 +32,18 @@ const NavItems = styled.div`
 const NavIcon = styled.div`
   cursor: pointer;
   display: flex;
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.radii.md};
   justify-content: center;
-  width: 40px;;
-  height: 40px;;
+  align-items: center;
+  width: 40px;
+  height: 40px;
   transition: all 0.2s ease;
+  color: ${({ theme }) => theme.colors.text};
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
-    color: ${({ theme }) => theme.colors.text};
-  };
+    background-color: ${({ theme }) => theme.colors.secondaryLight};
+    color: ${({ theme }) => theme.colors.textPrimary};
+  }
 `;
 
 const Header = () => {
@@ -79,6 +81,21 @@ const Header = () => {
     }
   };
 
+
+
+  useEffect(() => {
+    const script1 = document.createElement('script');
+    script1.src = 'https://cdn.botpress.cloud/webchat/v2.3/inject.js';
+    document.body.appendChild(script1);
+
+    const script2 = document.createElement('script');
+    script2.src = 'https://files.bpcontent.cloud/2025/04/18/17/20250418174829-PSCQOU8Y.js';
+    document.body.appendChild(script2);
+    return () => {
+      document.body.removeChild(script1);
+      document.body.removeChild(script2);
+    }
+  }, []);
   return (
     <HeaderContainer>
       <LogoContainer onClick={() => {
@@ -99,6 +116,7 @@ const Header = () => {
         </NavIcon>
       </NavItems>
     </HeaderContainer>
+
   );
 };
 

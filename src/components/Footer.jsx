@@ -8,6 +8,7 @@ const FooterContainer = styled.footer`
   font-size: 0.875rem;
   border-top: 1px solid ${({ theme }) => theme.colors.border};
   margin-top: 2rem;
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const FooterLinks = styled.div`
@@ -23,7 +24,7 @@ const FooterLink = styled.a`
   transition: color 0.2s ease;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primaryLight};
   }
 `;
 
