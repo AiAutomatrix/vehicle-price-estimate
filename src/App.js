@@ -80,7 +80,6 @@ function ThemedAppContent() {
 
 // Main App component wraps everything with the AppProvider
 function App({ children }) {
-  useAppContext();
   console.log('App component rendering'); // Log when the App component renders
   
   

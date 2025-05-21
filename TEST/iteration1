@@ -1,0 +1,17 @@
+// Initialize workflow memory structures
+if (!workflow.ToolOutputs) workflow.ToolOutputs = {};
+if (!workflow.ToolOutputs.searchResults) workflow.ToolOutputs.searchResults = { source: "websearch", data: [] };
+if (!workflow.ToolOutputs.fragments) workflow.ToolOutputs.fragments = [];
+if (!workflow.ToolOutputs.validatedLeads) workflow.ToolOutputs.validatedLeads = [];
+if (!workflow.ToolOutputs.errors) workflow.ToolOutputs.errors = [];
+
+// Perform web search using the predefined Google Dorking query
+const searchResults = await browser.webSearch({
+  query: "https://www.google.com/search?q=auto+detailing+business+winnipeg+manitoba+canada&...=&udm=1",
+  count: 8,
+  browsePages: false
+});
+
+workflow.ToolOutputs.searchResults = { source: "websearch", data: searchResults.results };
+
+return { action: 'think', searchResults };

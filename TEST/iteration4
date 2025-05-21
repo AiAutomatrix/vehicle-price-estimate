@@ -1,0 +1,3 @@
+// No valid leads were found in the fragments. Transition to the next step.
+workflow.transition({ reason: "No valid leads found", condition: "done" });
+return { action: 'listen' };

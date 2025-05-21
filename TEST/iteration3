@@ -1,0 +1,83 @@
+// Extract leads from the fragments and validate them
+const validatedLeads = [];
+for (const fragment of workflow.ToolOutputs.fragments) {
+  const { url, extracted } = fragment;
+  const { text, metadata, contacts } = extracted;
+
+  const businessName = metadata?.title || url;
+  const websiteURL = url;
+  const contactPage = extractContactPage(fragment);
+  const email = contacts.emails?.[0] || null;
+  const phone = contacts.phones?.[0] || null;
+  const location = extractLocation(fragment);
+  const notes = generateNotes(fragment);
+  const dateFound = new Date().toISOString();
+  const businessType = "Auto Detailing";
+  const googleMapsURL = generateGoogleMapsLink(fragment);
+
+  const lead = {
+    "Business Name": businessName,
+    "Website URL": websiteURL,
+    "Contact Page": contactPage,
+    "Email": email,
+    "Phone": phone,
+    "Location": location,
+    "Notes": notes,
+    "Date Found": dateFound,
+    "Business Type": businessType,
+    "Google Maps URL": googleMapsURL
+  };
+
+  // Validate the lead
+  const hasRequired = lead["Business Name"] && lead["Website URL"] && lead["Location"];
+  const hasOptional = lead.Email || lead.Phone || lead["Contact Page"];
+  if (hasRequired && hasOptional) {
+    validatedLeads.push(lead);
+  }
+}
+
+// Save valid leads to memory table
+let createTableResult;
+if (validatedLeads.length > 0) {
+  createTableResult = await MemoryTable.createTableRows({
+    rows: validatedLeads
+  });
+
+  workflow.ToolOutputs.createTableResult = {
+    status: createTableResult.rows ? "success" : "failed",
+    count: createTableResult.rows?.length || 0,
+    errors: createTableResult.errors || null
+  };
+} else {
+  workflow.ToolOutputs.createTableResult = {
+    status: "no leads",
+    count: 0,
+    errors: null
+  };
+}
+
+return { action: 'think', validatedLeads, createTableResult };
+
+// Helper functions
+function extractContactPage(fragment) {
+  const links = fragment.rawHtml.match(/<a [^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi) || [];
+  return links.find(link => /contact/i.test(link))?.match(/href=["']([^"']+)["']/)?.[1] || null;
+}
+
+function extractLocation(fragment) {
+  const match = fragment.extracted.text.match(/\d{1,5}\s+[\w\s\.\-]+\,?\s+[\w\s]+\,?\s+[A-Z]{2}\s+\d{5}/);
+  return match ? match[0].trim() : null;
+}
+
+function generateGoogleMapsLink(fragment) {
+  const loc = extractLocation(fragment);
+  return loc ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}` : null;
+}
+
+function generateNotes(fragment) {
+  const note = [];
+  if (fragment.extracted.contacts.emails?.length) note.push("Email found");
+  if (fragment.extracted.contacts.phones?.length) note.push("Phone number found");
+  if (extractContactPage(fragment)) note.push("Contact page detected");
+  return note.join(", ");
+}

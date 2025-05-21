@@ -2,7 +2,8 @@ import ImageUpload from '../components/ImageUpload';
 import { useAppContext } from '../context/AppContext';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useBotpressForm } from '../hooks/useBotpressForm';
+import { useBotpressPackages } from '../hooks/useBotpressPackages';
+import { useBotpressSubmit } from '../hooks/useBotpressSubmit';
 import { saveFormData } from '../scripts/formDataStore';
 
 const FormContainer = styled.div`
@@ -147,12 +148,7 @@ const FullWidthButton = styled(Button)`
 `;
 
 const VehicleForm = ({ onSubmit }) => {
-  const { distanceUnit } = useAppContext();
-  const [packages, setPackages] = useState([]);
-  const [selectedPackage, setSelectedPackage] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [mileageUnit, setMileageUnit] = useState(distanceUnit === 'metric' ? 'kilometers' : 'miles');
-
+  // Validate function declared first
   const validateForm = (values) => {
     const errors = {};
     if (!values.make) errors.make = 'Make is required';
@@ -161,36 +157,85 @@ const VehicleForm = ({ onSubmit }) => {
     return errors;
   };
 
-  const {
-    values: formData,
-    errors,
-    isLoading,
-    apiError,
-    handleChange,
-    sendEventToBackend,
-    resetForm
-  } = useBotpressForm({
+  const { distanceUnit } = useAppContext();
+ 
+  const [selectedPackage, setSelectedPackage] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [mileageUnit, setMileageUnit] = useState(distanceUnit === 'metric' ? 'kilometers' : 'miles');
+  
+  // Form state
+  const [formData, setFormData] = useState({
     make: '',
     model: '',
     year: '',
     mileage: ''
-  }, validateForm);
+  });
+  
+  const [errors, setErrors] = useState({});
+  const [loadingStates, setLoadingStates] = useState({
+    imageUpload: false
+  });
 
+  // Packages hook
+  const {
+    isLoading: isLoadingPackages,
+    apiError: packagesError,
+    packages, // Now comes directly from the hook
+    sendEventToBackend
+  } = useBotpressPackages();
+
+  // Submit hook
+  const {
+    isSubmitting,
+    submitError,
+    submitFormData
+  } = useBotpressSubmit();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => {
+      const newValues = { ...prev, [name]: value };
+      setErrors(validateForm(newValues));
+      return newValues;
+    });
+  };
+
+  // Simplified handleGetPackages
   const handleGetPackages = async () => {
     if (Object.keys(errors).length > 0) return;
 
     try {
-      const { parsedList } = await sendEventToBackend('vehicle-form-data', {
+      setShowDropdown(false);
+      await sendEventToBackend('vehicle-form-data', {
         action: 'get-packages',
-        vehicle: { make: formData.make, model: formData.model, year: formData.year },
+        vehicle: { 
+          make: formData.make, 
+          model: formData.model, 
+          year: formData.year 
+        },
         mileageUnit
       });
-
-      setPackages(parsedList);
       setShowDropdown(true);
-      setSelectedPackage(''); // Reset selected package when getting new packages
+      setSelectedPackage('');
     } catch (error) {
       console.error('Failed to get packages:', error);
+      setShowDropdown(false);
+    }
+  };
+
+  const handleImageUpload = async (images) => {
+    if (images.length === 0) return;
+
+    setLoadingStates(prev => ({ ...prev, imageUpload: true }));
+    
+    try {
+      await sendPackageRequest('vehicle-images-uploaded', {
+        imageCount: images.length
+      });
+    } catch (error) {
+      console.error('Failed to upload images:', error);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, imageUpload: false }));
     }
   };
 
@@ -205,10 +250,13 @@ const VehicleForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const submissionErrors = validateForm(formData);
     if (!formData.mileage) submissionErrors.mileage = 'Mileage is required';
-    if (Object.keys(submissionErrors).length > 0) return;
+    if (Object.keys(submissionErrors).length > 0) {
+      setErrors(submissionErrors);
+      return;
+    }
 
     try {
       const fullFormData = {
@@ -222,15 +270,19 @@ const VehicleForm = ({ onSubmit }) => {
         selectedPackage: selectedPackage || null
       };
 
-      console.log('Submitting full form data with selected package:', fullFormData);
-      const result = await sendEventToBackend('vehicle-valuation-request', fullFormData);
-      await saveFormData(formData, sendEventToBackend);
-      console.log('Form submitted successfully:', result);
-      
-      onSubmit(formData);
-      resetForm();
+      // Save form data to botpress event.payload
+      await saveFormData({ ...formData, selectedPackage }, submitFormData);
+
+      onSubmit({ ...formData, selectedPackage });
+      setFormData({
+        make: '',
+        model: '',
+        year: '',
+        mileage: ''
+      });
       setSelectedPackage('');
       setShowDropdown(false);
+      setErrors({});
     } catch (error) {
       console.error('Form submission failed:', error);
     }
@@ -241,61 +293,56 @@ const VehicleForm = ({ onSubmit }) => {
       <form onSubmit={handleSubmit}>
         <FormGroup>
           <Label htmlFor="year">Year</Label>
-          <Input 
-            id="year" 
-            name="year" 
-            value={formData.year} 
-            onChange={handleChange} 
-            placeholder="Enter year" 
-            disabled={isLoading} 
+          <Input
+            id="year"
+            name="year"
+            value={formData.year}
+            onChange={handleChange}
+            placeholder="Enter year"
+            disabled={isSubmitting}
           />
           {errors.year && <ErrorMessage>{errors.year}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>
           <Label htmlFor="make">Make</Label>
-          <Input 
-            id="make" 
-            name="make" 
-            value={formData.make} 
-            onChange={handleChange} 
-            placeholder="Enter make" 
-            disabled={isLoading} 
+          <Input
+            id="make"
+            name="make"
+            value={formData.make}
+            onChange={handleChange}
+            placeholder="Enter make"
+            disabled={isSubmitting}
           />
           {errors.make && <ErrorMessage>{errors.make}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>
           <Label htmlFor="model">Model</Label>
-          <Input 
-            id="model" 
-            name="model" 
-            value={formData.model} 
-            onChange={handleChange} 
-            placeholder="Enter model" 
-            disabled={isLoading} 
+          <Input
+            id="model"
+            name="model"
+            value={formData.model}
+            onChange={handleChange}
+            placeholder="Enter model"
+            disabled={isSubmitting}
           />
           {errors.model && <ErrorMessage>{errors.model}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>
           <ButtonGroup>
-            <ImageUpload 
-              onImageUpload={(images) => {
-                if (images.length > 0) {
-                  sendEventToBackend('vehicle-images-uploaded', {
-                    imageCount: images.length
-                  });
-                }
-              }} 
-              disabled={isLoading} 
+            <ImageUpload
+              onImageUpload={handleImageUpload}
+              disabled={isSubmitting || loadingStates.imageUpload}
+              isLoading={loadingStates.imageUpload}
             />
-            <FullWidthButton 
-              type="button" 
-              onClick={handleGetPackages} 
-              disabled={!formData.model || isLoading}
+            <FullWidthButton
+              type="button"
+              onClick={handleGetPackages}
+              disabled={!formData.model || isLoadingPackages || isSubmitting}
             >
-              {isLoading ? <LoadingSpinner /> : 'Get Packages'}
+              {isLoadingPackages ? <LoadingSpinner /> : 'Get Packages'}
             </FullWidthButton>
           </ButtonGroup>
         </FormGroup>
@@ -303,12 +350,12 @@ const VehicleForm = ({ onSubmit }) => {
         {showDropdown && (
           <FormGroup>
             <Label htmlFor="package">Select a Package</Label>
-            <Select 
-              id="package" 
-              name="package" 
-              value={selectedPackage} 
-              onChange={handlePackageChange} 
-              disabled={isLoading}
+            <Select
+              id="package"
+              name="package"
+              value={selectedPackage}
+              onChange={handlePackageChange}
+              disabled={isSubmitting}
             >
               <option value="">-- Select a Package --</option>
               {packages.map((pkg, index) => (
@@ -321,16 +368,16 @@ const VehicleForm = ({ onSubmit }) => {
         <FormGroup>
           <Label htmlFor="mileage">Mileage ({mileageUnit})</Label>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Input 
-              type="number" 
-              id="mileage" 
-              name="mileage" 
-              value={formData.mileage} 
-              onChange={handleChange} 
-              placeholder="Enter mileage" 
-              disabled={isLoading} 
+            <Input
+              type="number"
+              id="mileage"
+              name="mileage"
+              value={formData.mileage}
+              onChange={handleChange}
+              placeholder="Enter mileage"
+              disabled={isSubmitting}
             />
-            <ToggleContainer onClick={!isLoading ? handleToggleMileageUnit : undefined}>
+            <ToggleContainer onClick={!isSubmitting ? handleToggleMileageUnit : undefined}>
               <ToggleSwitch active={mileageUnit === 'miles'}>
                 <ToggleButton active={mileageUnit === 'miles'} />
               </ToggleSwitch>
@@ -340,18 +387,23 @@ const VehicleForm = ({ onSubmit }) => {
         </FormGroup>
 
         <FormGroup>
-          <ButtonGroup>
-            <FullWidthButton 
-              type="submit" 
-              disabled={isLoading || (showDropdown && !selectedPackage)}
-            >
-              {isLoading ? <><LoadingSpinner /> Processing...</> : 'Get Valuation'}
-            </FullWidthButton>
-          </ButtonGroup>
+          <Button 
+            type="submit" 
+            disabled={
+              isSubmitting || 
+              !formData.mileage || 
+              !selectedPackage || 
+              isLoadingPackages
+            }
+          >
+            {isSubmitting ? <LoadingSpinner /> : 'Submit'}
+          </Button>
         </FormGroup>
-      </form>
 
-      {apiError && <ApiErrorMessage>{apiError}</ApiErrorMessage>}
+        {(packagesError || submitError) && (
+          <ApiErrorMessage>{packagesError || submitError}</ApiErrorMessage>
+        )}
+      </form>
     </FormContainer>
   );
 };

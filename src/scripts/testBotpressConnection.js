@@ -7,8 +7,10 @@ const path = require('path');
 const { saveSession } = require('./botpressSessionStore2.js');
 
 // Replace with your actual Webhook ID
-const WEBHOOK_ID = '5fa42c48-fe97-43a5-9a5d-f1581220dffe';
+const WEBHOOK_ID = '8871b949-aead-4c1a-ab33-66985139a10b';
 const BASE_URL = `https://chat.botpress.cloud/${WEBHOOK_ID}`;
+
+//https://webhook.botpress.cloud/8871b949-aead-4c1a-ab33-66985139a10b
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -71,7 +73,7 @@ async function main() {
     console.log('\n📤 Sent message response:', sendMsgRes.data);
 
     console.log('\n⏳ Waiting for Botpress to respond...');
-    await delay(25000); // Use a 5 second delay to get the bot response
+    await delay(10000); // Use a 10 second delay to get the bot response
 
     const listRes = await axios.get(
       `${BASE_URL}/conversations/${conversationId}/messages`,

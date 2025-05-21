@@ -1,81 +1,87 @@
 // src/hooks/useBotpressListener.js
-import { useState, useEffect, useRef, useCallback } from 'react';
-
-const BASE_API = 'https://chat.botpress.cloud';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { useAppContext, BASE_URL } from '../context/AppContext';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 export const useBotpressListener = ({ onMessage, onEvent, onUser }) => {
   const [connected, setConnected] = useState(false);
-  const [apiError, setApiError]   = useState(null);
-  const eventSourceRef            = useRef(null);
+  const [apiError, setApiError] = useState(null);
+  const abortCtrl = useRef(null);
+  const retries = useRef(0);
+  const MAX_RETRIES = 5;
+  const { botpressSession } = useAppContext();
 
-  const initSession = useCallback(() => {
-    const userKey        = localStorage.getItem('xUserKey');
-    const conversationId = localStorage.getItem('conversationId');
-    const webhookId      = localStorage.getItem('webhookId');
-    if (!userKey || !conversationId || !webhookId) return null;
-    return { userKey, conversationId, webhookId };
+  const stop = useCallback(() => {
+    console.log('🛑 Stopping SSE');
+    abortCtrl.current?.abort();
+    setConnected(false);
   }, []);
 
   const start = useCallback(() => {
-    const sess = initSession();
-    if (!sess) {
-      console.warn('🚨 Missing session info for SSE');
+    if (!botpressSession) {
+      console.warn('❌ No Botpress session');
       return;
     }
-    const { userKey, conversationId, webhookId } = sess;
-    const url =
-      `${BASE_API}/${webhookId}/conversations/${conversationId}/listen` +
-      `?x-user-key=${encodeURIComponent(userKey)}`;
 
-    // Only create one EventSource
-    if (eventSourceRef.current) return;
+    const { userKey, conversationId } = botpressSession;
+    const url = `${BASE_URL}/conversations/${conversationId}/listen`;
+    console.log('🔌 Opening SSE to', url);
 
-    const es = new EventSource(url);
-    eventSourceRef.current = es;
+    abortCtrl.current?.abort();
+    const controller = new AbortController();
+    abortCtrl.current = controller;
 
-    es.onopen = () => {
-      console.log('📡 SSE connected');
-      setConnected(true);
-    };
-
-    es.onmessage = evt => {
-      try {
-        const packet = JSON.parse(evt.data);
-        if (packet.type === 'message') onMessage?.(packet.payload, packet);
-        else if (packet.type === 'event') onEvent?.(packet.payload, packet);
-        else if (packet.type === 'user') onUser?.(packet.payload, packet);
-      } catch (e) {
-        console.error('⚠️ SSE parse error', e);
+    fetchEventSource(url, {
+      signal: controller.signal,
+      headers: { 'x-user-key': userKey },
+      onopen: () => {
+        console.log('✅ SSE connected');
+        setConnected(true);
+        retries.current = 0;
+      },
+      onmessage: evt => {
+        console.log('📨 raw SSE event:', evt.data);
+        if (evt.data === 'ping') {
+          console.log('↔️ Received ping');
+          return;
+        }
+        try {
+          const packet = JSON.parse(evt.data);
+          const { type, data } = packet;
+          switch (type) {
+            case 'message_created':
+              onMessage?.(data.payload, packet);
+              stop();
+              break;
+            case 'event_created':
+              onEvent?.(data.payload, packet);
+              break;
+            case 'user_created':
+              onUser?.(data.payload, packet);
+              break;
+            default:
+              console.warn(`⚠️ Unhandled packet type: ${type}`);
+          }
+        } catch (err) {
+          console.error('❌ SSE parse error:', err);
+        }
+      },
+      onerror: err => {
+        console.error('❌ SSE error:', err);
+        setConnected(false);
+        if (retries.current < MAX_RETRIES) {
+          const backoff = Math.pow(2, ++retries.current) * 1000;
+          console.warn(`🔁 reconnect #${retries.current} in ${backoff/1000}s`);
+          setTimeout(start, backoff);
+        } else {
+          console.error('🚫 Max SSE retries reached');
+          setApiError('SSE max retries reached');
+        }
       }
-    };
+    });
+  }, [botpressSession, onMessage, onEvent, onUser, stop]);
 
-    es.onerror = err => {
-      console.error('🛑 SSE error', err);
-      setApiError(err.message || 'SSE error');
-      es.close();
-      eventSourceRef.current = null;
-      setConnected(false);
-    };
-  }, [initSession, onMessage, onEvent, onUser]);
+  useEffect(() => () => stop(), [stop]);
 
-  const stop = useCallback(() => {
-    eventSourceRef.current?.close();
-    eventSourceRef.current = null;
-    setConnected(false);
-    console.log('🧹 SSE stopped');
-  }, []);
-
-  const fetchMessages = useCallback(async () => {
-    const sess = initSession();
-    if (!sess) throw new Error('No session');
-    const { userKey, conversationId, webhookId } = sess;
-    const res = await fetch(
-      `${BASE_API}/${webhookId}/conversations/${conversationId}/messages`,
-      { headers: { 'x-user-key': userKey } }
-    );
-    if (!res.ok) throw new Error('Failed to fetch messages');
-    return (await res.json()).messages;
-  }, [initSession]);
-
-  return { connected, apiError, start, stop, fetchMessages };
+  return { connected, apiError, start, stop };
 };

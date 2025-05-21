@@ -1,0 +1,21 @@
+// The googleDorking tool has returned business details for auto detailing companies in Winnipeg.
+// I will now organize this information and use VoiceBox to present it to the user.
+const leads = googleDorkingResult.output.leads;
+
+const report = leads.map(lead => {
+  return `**Business Name:** ${lead["Business Name"]}\n` +
+         `**Location:** ${lead["Location"]}\n` +
+         `**Phone:** ${lead["Phone"]}\n` +
+         `**Email:** ${lead["Email"]}\n` +
+         `**Website:** [Visit Website](${lead["Website URL"]})\n` +
+         `**Contact Page:** [Contact Page](${lead["Contact Page"]})\n` +
+         `**Date Found:** ${lead["Date Found"]}\n\n`;
+}).join('---\n\n');
+
+const response = await voiceBox({
+  input: `Here are the details of auto detailing companies in Winnipeg, Manitoba:\n\n${report}`,
+  images: []
+});
+
+// Think: The business details have been successfully presented to the user via VoiceBox.
+return { action: 'think', response };

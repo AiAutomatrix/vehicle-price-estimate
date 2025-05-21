@@ -1,0 +1,32 @@
+// Browse each search result page individually to extract detailed information
+const urls = workflow.ToolOutputs.searchResults.data.map(result => result.url);
+const browseResults = await browser.browsePages({ urls, waitFor: 5000 });
+
+// Save each result as a fragment
+for (const result of browseResults.results) {
+  const fragment = {
+    url: result.url,
+    timestamp: new Date().toISOString(),
+    rawHtml: result.content,
+    extracted: {
+      text: result.content,
+      metadata: {
+        title: result.title,
+        description: result.description
+      },
+      contacts: extractContacts(result.content)
+    }
+  };
+  workflow.ToolOutputs.fragments.push(fragment);
+}
+
+// Extract contacts from text
+function extractContacts(text: string) {
+  const emailRegex = /[\w.-]+@[\w.-]+\.[\w.-]+/g;
+  const phoneRegex = /\b(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*\d{3}\s*\)|\d{3})(?:[.\-\s]*)\d{3}(?:[.\-\s]*)\d{4}\b/g;
+  const emails = text.match(emailRegex) || [];
+  const phones = text.match(phoneRegex) || [];
+  return { emails, phones };
+}
+
+return { action: 'think', browseResults };
